@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -19,14 +20,25 @@ public class Membresia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String tipo;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "tipo_membresia_id", nullable = false)
+    private TipoMembresia tipoMembresia;
 
-    @Column(nullable = false)
-    private BigDecimal precio;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "miembro_id", nullable = false)
     @JsonBackReference
     private Miembro miembro;
+
+    @Column(nullable = false)
+    private LocalDate fechaInicio;
+
+    @Column(nullable = false)
+    private LocalDate fechaFin;
+
+    @PrePersist
+    public void calcularFechas() {
+        this.fechaInicio = LocalDate.now();
+        this.fechaFin = this.fechaInicio.plusMonths(this.tipoMembresia.getMes());
+    }
 }

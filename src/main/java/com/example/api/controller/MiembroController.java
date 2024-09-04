@@ -1,6 +1,9 @@
 package com.example.api.controller;
 
+import com.example.api.config.ResourceNotFoundException;
+import com.example.api.entity.Membresia;
 import com.example.api.entity.Miembro;
+import com.example.api.service.MembresiaService;
 import com.example.api.service.MiembroService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,10 +13,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/miembros")
+@CrossOrigin(origins = "http://localhost:4200")
 public class MiembroController {
 
     @Autowired
     private MiembroService miembroService;
+
+    @Autowired
+    private MembresiaService membresiaService;
 
     @GetMapping
     public List<Miembro> getAllMiembros() {
@@ -46,8 +53,8 @@ public class MiembroController {
 
     @PostMapping
     public ResponseEntity<Miembro> createMiembro(@RequestBody Miembro miembro) {
-        Miembro nuevoMiembro = miembroService.save(miembro);
-        return ResponseEntity.ok(nuevoMiembro);
+        Miembro newMiembro = miembroService.createMiembro(miembro);
+        return ResponseEntity.ok(newMiembro);
     }
 
     @PutMapping("/{id}")
